@@ -92,7 +92,7 @@ import { Toaster } from 'react-hot-toast';
 import Header from './Header';
 import Footer from './Footer';
 
-import backgroundVideo from '../../assets/videos/video1.mp4';
+import backgroundVideo from './../../../public/video/video1.mp4';
 
 const MainLayout = () => {
   const videoRef = useRef(null);
