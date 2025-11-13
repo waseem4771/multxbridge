@@ -1,0 +1,19 @@
+/* Modal ke container ke liye animation */
+.modal-fade-enter {
+    opacity: 0;
+  }
+  .modal-fade-enter-active {
+    opacity: 1;
+    transition: opacity 200ms ease-in-out;
+  }
+  
+  /* Modal ke panel (card) ke liye animation */
+  .modal-scale-enter {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  .modal-scale-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: all 200ms ease-in-out;
+  }
