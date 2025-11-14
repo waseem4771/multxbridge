@@ -135,6 +135,7 @@ import '../../assets/css/animations.css';
 import { useWallet } from '../../contexts/WalletContext';
 import AddressDisplay from '../common/AddressDisplay';
 import NetworkDisplay from '../common/NetworkDisplay';
+import NetworkSwitcher from '../common/NetworkSwitcher';
 import Button from '../ui/Button';
 
 const Header = () => {
@@ -197,8 +198,9 @@ const Header = () => {
         {/* === RIGHT SIDE CONTENT === */}
         <div className="flex items-center gap-2 sm:gap-4">
           {isConnected ? (
-            <div className="hidden md:flex items-center gap-4 bg-slate-900/50 border border-slate-700/40 py-2 px-3 rounded-full">
-              <NetworkDisplay />
+            <div className="hidden md:flex items-center gap-3 bg-slate-900/50 border border-slate-700/40 py-2 px-3 rounded-full">
+              <NetworkSwitcher />
+              <div className="h-6 w-px bg-slate-700"></div>
               <AddressDisplay />
             </div>
           ) : (
@@ -246,7 +248,9 @@ const Header = () => {
             {isConnected && (
               <div className="border-t border-slate-700 mt-3 pt-3">
                 <div className="flex flex-col items-start gap-3 px-3">
-                    <NetworkDisplay />
+                    <div className="w-full">
+                      <NetworkSwitcher />
+                    </div>
                     <AddressDisplay />
                 </div>
               </div>

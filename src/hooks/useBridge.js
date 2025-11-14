@@ -86,9 +86,8 @@ import { useState } from 'react';
 import { useWallet } from './../contexts/WalletContext';
 import useContract from './useContract';
 
-// === YAHAN GHALATI THEEK KI GAYI HAI ===
 // Bridge contract ka sahi ABI import karein
-import multxBridgeAbi from './../constants/abi/ierc20Abi.json';
+import multxBridgeAbi from './../constants/abi/multxBridgeAbi.json';
 
 const useBridge = (bridgeAddress) => {
   const { signer } = useWallet();
@@ -97,7 +96,7 @@ const useBridge = (bridgeAddress) => {
   const [error, setError] = useState(null);
 
   // Bridge contract ka instance haasil karein
-  const bridgeContract = useContract(bridgeAddress, multxBridgeAbi);
+  const bridgeContract = useContract(bridgeAddress, multxBridgeAbi.abi);
 
   const lockTokens = async (tokenAddress, amount, targetChainId) => {
     if (!bridgeContract || !signer) {

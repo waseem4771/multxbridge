@@ -63,10 +63,10 @@ import usdtLogo from './../assets/images/usdtLogo.svg';
 // 1. DAI ka logo import/uncomment karein
 import daiLogo from './../assets/images/daiLogo.svg';
 
-// Bridge contract addresses jo documentation mein di gayi hain
+// Bridge contract addresses - Deployed contracts
 const BRIDGE_CONTRACTS = {
-  11155111: '0xa772d301Ef4030037d626157B6Fbfd04282b6b7c', // Ethereum Sepolia
-  97: '0x672BFCb0617Fc2f336981a550471944A9294EECd',      // BNB Chain Testnet
+  11155111: '0xa77bD19324A9438bA0b3473AA6b4Fd834246Eec1', // Ethereum Sepolia
+  97: '0x6714951EFC1ED9C703c946c48F7cD666948BBB06',      // BNB Chain Testnet
 };
 
 // Yahan hum apne tokens ko define kar rahe hain
@@ -75,12 +75,11 @@ export const SUPPORTED_TOKENS = [
     symbol: 'USDT',
     name: 'Tether USD',
     logo: usdtLogo,
-    decimals: 18,
+    decimals: 6, // USDT uses 6 decimals (not 18)
     addresses: {
-      // Har chain ID ke liye is token ka contract address
-      // ZAROORI: Yahan asli testnet addresses daalein
-      11155111: '0xYourSepoliaUsdtAddress',
-      97: '0xYourBnbTestnetUsdtAddress',
+      // Mock USDT token addresses
+      11155111: '0x5e4724CfC90e327de28d570d38550AE4c87C1392', // Sepolia Testnet - Mock USDT
+      97: '0x08DB56aB63cB3ac8921bcb1e9bE57a0A0fD91F1a',      // BNB Chain Testnet - Mock USDT
     },
   },
   // 2. DAI ke object ko uncomment karein

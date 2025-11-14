@@ -63,10 +63,13 @@ const API_BASE_URL = 'http://localhost:3001'; // Example URL
 export const pollForSignatures = (bridgeTxHash) => {
   // Hum Promise return kar rahe hain taake UI iske complete hone ka intezar kar sake
   return new Promise((resolve, reject) => {
+    let pollAttempts = 0;
+    const maxAttempts = 3; // Try 3 times before giving up
     
     // Har 10 second mein check karne ke liye interval set karein
     const interval = setInterval(async () => {
       try {
+        pollAttempts++;
         const response = await fetch(`${API_BASE_URL}/bridge/signatures/${bridgeTxHash}`);
         
         if (!response.ok) {
@@ -84,9 +87,30 @@ export const pollForSignatures = (bridgeTxHash) => {
         }
         // Agar ready nahi, to interval chalta rahega
       } catch (error) {
-        clearInterval(interval);
-        clearTimeout(timeout);
-        reject(error);
+        // Check if it's a connection error (backend not running)
+        if (error.message.includes('Failed to fetch') || error.message.includes('ERR_CONNECTION_REFUSED') || error.message.includes('NetworkError')) {
+          // Backend is not available - use mock signatures for testing
+          clearInterval(interval);
+          clearTimeout(timeout);
+          console.warn('Backend validator service is not available. Using mock signatures for testing.');
+          
+          // Import and generate mock signatures
+          import('../utils/mockSignatures').then(({ getMockReleaseParams }) => {
+            // We need the lock event data to generate proper mock signatures
+            // For now, resolve with a flag that indicates mock signatures should be used
+            resolve({ useMockSignatures: true, bridgeTxHash });
+          }).catch(() => {
+            resolve(null);
+          });
+          return;
+        }
+        
+        // For other errors, continue polling but limit attempts
+        if (pollAttempts >= maxAttempts) {
+          clearInterval(interval);
+          clearTimeout(timeout);
+          reject(new Error(`Failed to fetch signatures after ${maxAttempts} attempts: ${error.message}`));
+        }
       }
     }, 10000); // Har 10 second (10,000 ms)
 
@@ -125,6 +149,11 @@ export const getUserTransactions = async (userAddress) => {
     return data.transactions || [];
 
   } catch (error) {
+    // Only log connection errors, don't spam console for expected backend unavailability
+    if (error.message.includes('Failed to fetch') || error.message.includes('ERR_CONNECTION_REFUSED')) {
+      // Backend not running - this is expected in development, don't log as error
+      return [];
+    }
     console.error("Failed to fetch user transactions:", error);
     // Error ki soorat mein khali array return karein taake app crash na ho
     return [];

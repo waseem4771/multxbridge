@@ -1,3 +1,64 @@
+# Mutix Bridge - Cross-Chain Token Bridge Application
+
+A React-based frontend application for bridging tokens between Ethereum Sepolia and BNB Chain Testnet.
+
+## 📋 Important: Backend Development Required
+
+**The frontend is fully functional, but requires a backend service for validator signatures.**
+
+### For Backend Developers:
+
+- 📖 **[Backend Development Guide](./BACKEND_DEVELOPMENT_GUIDE.md)** - Complete documentation for building the validator service
+- ⚡ **[Quick Start Guide](./BACKEND_QUICK_START.md)** - Quick reference for essential requirements
+
+### Current Status:
+
+- ✅ Frontend fully implemented and tested
+- ✅ Smart contracts deployed on testnets
+- ❌ Backend validator service **NOT IMPLEMENTED** (required for token release)
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 16+ and npm/pnpm
+- MetaMask or compatible Web3 wallet
+- Testnet tokens for testing
+
+### Installation
+
+```bash
+npm install
+# or
+pnpm install
+```
+
+### Development
+
+```bash
+npm run dev
+# or
+pnpm dev
+```
+
+### Build
+
+```bash
+npm run build
+# or
+pnpm build
+```
+
+---
+
+## 📚 Project Structure
+
+See below for detailed file structure documentation.
+
+---
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

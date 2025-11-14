@@ -120,6 +120,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { ethers } from 'ethers';
 import toast from 'react-hot-toast';
+import { CHAINS_BY_ID } from '../constants/chains';
 
 // --- ENHANCEMENT: Behtar UI ke liye Toaster component ko import karna zaroori hai ---
 // Isay aap apne MainLayout.jsx ya App.jsx mein istemal karenge.
@@ -157,10 +158,14 @@ export const WalletProvider = ({ children }) => {
       setProvider(web3Provider);
       setSigner(web3Signer);
       setAddress(userAddress);
-      setChainId(network.chainId);
+      // ChainId ko number mein convert karein (ethers.js BigNumber return kar sakta hai)
+      const currentChainId = Number(network.chainId);
+      setChainId(currentChainId);
 
-      // --- ENHANCEMENT 2: Kamyabi ka toast dikhana ---
-      toast.success('Wallet connected successfully!', { id: toastId });
+      // --- ENHANCEMENT 2: Kamyabi ka toast dikhana with network name ---
+      const chain = CHAINS_BY_ID[currentChainId];
+      const networkName = chain ? chain.name : `Chain ${currentChainId}`;
+      toast.success(`Wallet connected to ${networkName}!`, { id: toastId });
 
     } catch (error) {
       console.error("Error connecting wallet:", error);
@@ -182,8 +187,33 @@ export const WalletProvider = ({ children }) => {
     toast('Wallet disconnected.', { icon: '👋' });
   };
 
-  // useEffect mein koi tabdeeli nahi
+  // Wallet state ko check karne ke liye effect
   useEffect(() => {
+    const checkWalletConnection = async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          if (accounts.length > 0) {
+            // Agar wallet already connected hai, to state ko update karein
+            const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+            const web3Signer = web3Provider.getSigner();
+            const userAddress = await web3Signer.getAddress();
+            const network = await web3Provider.getNetwork();
+            
+            setProvider(web3Provider);
+            setSigner(web3Signer);
+            setAddress(userAddress);
+            setChainId(Number(network.chainId));
+          }
+        } catch (error) {
+          console.error("Error checking wallet connection:", error);
+        }
+      }
+    };
+
+    checkWalletConnection();
+
+    // Event listeners
     if (window.ethereum) {
       const handleAccountsChanged = (accounts) => {
         if (accounts.length > 0) {
@@ -192,8 +222,26 @@ export const WalletProvider = ({ children }) => {
           disconnectWallet();
         }
       };
-      const handleChainChanged = () => {
-        window.location.reload();
+      const handleChainChanged = async (chainIdHex) => {
+        // Update chainId immediately without reload
+        const newChainId = parseInt(chainIdHex, 16);
+        setChainId(newChainId);
+        
+        // Update provider and signer for new chain
+        try {
+          const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+          const web3Signer = web3Provider.getSigner();
+          setProvider(web3Provider);
+          setSigner(web3Signer);
+          
+          // Show toast notification
+          const chain = CHAINS_BY_ID[newChainId];
+          if (chain) {
+            toast.success(`Switched to ${chain.name}`, { icon: '🔄' });
+          }
+        } catch (error) {
+          console.error("Error updating chain:", error);
+        }
       };
       window.ethereum.on('accountsChanged', handleAccountsChanged);
       window.ethereum.on('chainChanged', handleChainChanged);

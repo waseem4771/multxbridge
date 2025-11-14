@@ -74,12 +74,22 @@ const useAllowance = (tokenAddress, spenderAddress) => {
 
   const fetchAllowance = useCallback(async () => {
     if (tokenContract && address && spenderAddress) {
+      // Validate addresses before making contract call
+      if (!ethers.utils.isAddress(tokenAddress) || !ethers.utils.isAddress(spenderAddress) || 
+          tokenAddress === '0x0000000000000000000000000000000000000000') {
+        setAllowance(ethers.BigNumber.from(0));
+        return;
+      }
+
       setLoading(true);
       try {
         const currentAllowance = await tokenContract.allowance(address, spenderAddress);
         setAllowance(currentAllowance);
       } catch (error) {
-        console.error("Failed to fetch allowance:", error);
+        // Only log non-critical errors (contract doesn't exist, etc.)
+        if (error.code !== 'CALL_EXCEPTION') {
+          console.error("Failed to fetch allowance:", error);
+        }
         setAllowance(ethers.BigNumber.from(0));
       } finally {
         setLoading(false);
@@ -88,12 +98,11 @@ const useAllowance = (tokenAddress, spenderAddress) => {
       // Yeh case handle karein jab wallet connected na ho
       setAllowance(ethers.BigNumber.from(0));
     }
-  }, [tokenContract, address, spenderAddress]);
+  }, [tokenContract, address, spenderAddress, tokenAddress, chainId]);
 
   useEffect(() => {
     fetchAllowance();
-    // 2. `useEffect` ke dependency array mein `chainId` shamil karein
-  }, [fetchAllowance, chainId]);
+  }, [fetchAllowance]);
 
   const refreshAllowance = fetchAllowance;
 

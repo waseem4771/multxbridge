@@ -49,7 +49,7 @@ import React from 'react';
 // - variant: Button ki look kaisi hogi ('primary' ya 'secondary')
 // - className: Agar koi extra style dena ho
 // - ...props: Button ki baaki properties jaise onClick ya disabled
-const Button = ({ children, variant = 'primary', className = '', ...props }) => {
+const Button = ({ children, variant = 'primary', className = '', fullWidth, ...props }) => {
   
   // --- RESPONSIVE ENHANCEMENT: Base style ko mobile ke liye adjust kiya gaya hai ---
   // - Padding aur font-size ko mobile (default) aur sm screens (desktop) ke liye alag kiya gaya hai.
@@ -65,8 +65,9 @@ const Button = ({ children, variant = 'primary', className = '', ...props }) => 
     secondary: 'bg-gray-600 text-white hover:bg-gray-500 hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900',
   };
 
-  // Yahan hum sab styles ko mila rahe hain
-  const combinedClassName = `${baseStyle} ${variantStyles[variant]} ${className}`;
+  // fullWidth prop ko className mein add karein, lekin DOM element ko pass na karein
+  const widthClass = fullWidth ? 'w-full' : '';
+  const combinedClassName = `${baseStyle} ${variantStyles[variant]} ${widthClass} ${className}`;
 
   return (
     <button className={combinedClassName} {...props}>
